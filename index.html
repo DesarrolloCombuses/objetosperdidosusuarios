@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>REGISTRO DE OBJETOS PERDIDOS USUARIOS</title>
+
+  <!-- Móvil y notch -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#0f172a" />
+
+  <style>
+    :root{
+      --bg: #0f172a;          /* slate-900 */
+      --ink: #e5e7eb;         /* gray-200 */
+      --card: #111827;        /* gray-900 */
+      --accent: #22d3ee;      /* cyan-400 */
+      --toolbar-h: 52px;
+      --vh: 1vh; /* se ajusta vía JS */
+    }
+    *{ box-sizing: border-box; }
+    html, body{ height: 100%; }
+    body{
+      margin: 0;
+      background: radial-gradient(1200px 600px at 30% 10%, #1f2937, #0b1220 60%, #070b13 100%);
+      color: var(--ink);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+
+      /* Respetar safe areas (notch) */
+      padding-top: env(safe-area-inset-top);
+      padding-right: env(safe-area-inset-right);
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-left: env(safe-area-inset-left);
+    }
+
+    .shell{
+      display: grid;
+      grid-template-rows: var(--toolbar-h) 1fr;
+      width: 100%;
+      height: calc((var(--vh) * 100) + env(safe-area-inset-bottom));
+      max-height: 100dvh;
+      gap: 8px;
+      padding: 10px;
+    }
+
+    .toolbar{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      height: var(--toolbar-h);
+      background: rgba(17,24,39,0.72);
+      backdrop-filter: saturate(140%) blur(10px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 8px 10px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.04);
+    }
+
+    .brand{
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 700; letter-spacing: .2px;
+      text-transform: uppercase;
+    }
+    .dot{
+      width: 10px; height: 10px; border-radius: 999px; background: var(--accent);
+      box-shadow: 0 0 22px var(--accent);
+    }
+    .toolbar .actions{ display:flex; gap: 8px; align-items: center; }
+
+    .btn{
+      appearance: none; border: 0; cursor: pointer;
+      border-radius: 12px; padding: 10px 14px; font-weight: 600;
+      background: #1f2937; color: #e5e7eb; border: 1px solid rgba(255,255,255,.08);
+      box-shadow: 0 6px 16px rgba(0,0,0,.35);
+      transition: transform .06s ease, box-shadow .12s ease, opacity .2s ease;
+    }
+    .btn:active{ transform: translateY(1px) scale(.995); box-shadow:none; }
+
+    .frameWrap{
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 14px 36px rgba(0,0,0,.45);
+    }
+
+    .appFrame{
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      border: 0;
+      display: block;
+      background: #000;
+    }
+
+    @media (max-width: 480px){
+      .btn{ padding: 9px 12px; }
+      .brand span{ font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="toolbar">
+      <div class="brand">
+        <span class="dot" aria-hidden="true"></span>
+        <span>REGISTRO DE OBJETOS PERDIDOS USUARIOS</span>
+      </div>
+      <div class="actions">
+        <button class="btn" id="btnReload" type="button" title="Recargar contenido">Recargar</button>
+      </div>
+    </header>
+
+    <main class="frameWrap">
+      <iframe
+        id="appFrame"
+        class="appFrame"
+        title="Aplicación Apps Script"
+        loading="eager"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allow="clipboard-write; camera; microphone; geolocation; fullscreen; display-capture"
+        allowfullscreen>
+      </iframe>
+    </main>
+  </div>
+
+  <script>
+    // ---- CONFIG ----
+    const APP_URL = "https://script.google.com/macros/s/AKfycbw6BNz0wv8csDar9mcQjSdntO0DWWO-mH2bt55dL9OzquCltuhUPwOi9tgMRXioIgzX/exec";
+
+    // Fix de 100vh en móviles
+    function setVhUnit(){
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    setVhUnit();
+    window.addEventListener('resize', setVhUnit);
+    window.addEventListener('orientationchange', setVhUnit);
+
+    // Cargar el iframe
+    const frame = document.getElementById('appFrame');
+    frame.src = APP_URL;
+
+    // Recargar sin caché
+    document.getElementById('btnReload').addEventListener('click', () => {
+      frame.src = APP_URL + (APP_URL.includes('?') ? '&' : '?') + '_ts=' + Date.now();
+    });
+  </script>
+</body>
+</html>
